@@ -1,0 +1,10 @@
+{
+    "name": "test/check24",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Test\\Check24\\": "html/"
+        }
+    },
+    "require": {}
+}
