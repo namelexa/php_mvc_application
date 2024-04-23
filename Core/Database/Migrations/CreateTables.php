@@ -48,8 +48,6 @@ class CreateTables
             CONSTRAINT fk_comment_post
               FOREIGN KEY (postId)
               REFERENCES check24.posts (id)
-              FOREIGN KEY (authorId)
-              REFERENCES check24.user (id)
               ON DELETE NO ACTION
               ON UPDATE NO ACTION'
     ];
