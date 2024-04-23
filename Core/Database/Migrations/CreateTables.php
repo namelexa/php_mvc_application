@@ -60,7 +60,7 @@ class CreateTables
     public function createTables(array $tables = []): bool
     {
         $list = $tables ?: self::TABLES_LIST;
-        show($list);
+
         return $this->connection->createTables($list);
     }
 }
