@@ -3,7 +3,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "Test\\Check24\\": "html/"
+            "Test\\Check24\\": "./"
         }
     },
     "require": {}

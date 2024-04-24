@@ -7,13 +7,26 @@ body {
 body {
     display: flex;
     justify-content: center;
-    width: 100%;
 
-    .layout {
+    header {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid;
+
+        .right {
+            max-width: 50px;
+            width: 100%;
+        }
+    }
+    .container {
         display: flex;
         max-width: 1700px;
         width: 100%;
         flex-direction: column;
-        align-self: inherit;
+        padding: 15px;
+    }
+
+    .main-layout {
+
     }
 }

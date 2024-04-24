@@ -19,20 +19,22 @@ class Router
     {
         try {
             $path = $this->getUrl();
-            $path = str_replace('/', '\\', ucwords($path, '/'));
-            $controllerPath = self::CONTROLLER_NAMESPACE . $path;
 
-            if (!class_exists($controllerPath)) {
-                $controllerPath = self::CONTROLLER_NAMESPACE . 'NotFound';
+            $path = str_replace('/', '\\', ucwords($path, '/'));
+            $controllerNamespace = self::CONTROLLER_NAMESPACE . $path;
+
+            if (!class_exists($controllerNamespace)) {
+                $controllerNamespace = self::CONTROLLER_NAMESPACE . 'NotFound';
             }
 
             $resolver = new ReflectionResolver();
 
             /** @var $controller AbstractController */
-            $controller = $resolver->resolve($controllerPath);
+            $controller = $resolver->resolve($controllerNamespace);
+
             $controller->execute();
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+            throw new \RuntimeException($e->getMessage());
         }
     }
 
@@ -40,6 +42,6 @@ class Router
     {
         $url = $_SERVER['REQUEST_URI'] ? ltrim($_SERVER['REQUEST_URI'], '/') : '';
 
-        return $url ?: 'HomePage';
+        return str_replace('_', '', ucwords($url, '_')) ?: 'HomePage';
     }
 }

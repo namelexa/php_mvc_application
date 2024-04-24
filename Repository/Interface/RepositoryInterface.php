@@ -6,19 +6,20 @@ namespace Test\Check24\Repository\Interface;
 
 interface RepositoryInterface
 {
-    public function save();
+    public function save(string $query, array $params);
 
-    public function edit();
+    public function update();
 
     public function delete();
 
     public function get(
-        string $table,
+        array $params = [],
+        int $fetchType = \PDO::FETCH_DEFAULT
+    );
+
+    public function getList(string $table,
         array $params = [],
         int $fetchType = \PDO::FETCH_DEFAULT,
         $fetchArgs = null,
-        $limit = null
-    );
-
-    public function getList();
+        $limit = null);
 }

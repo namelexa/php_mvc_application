@@ -5,20 +5,22 @@ declare(strict_types=1);
 namespace Test\Check24\Controller;
 
 use Test\Check24\Model\Post;
+use Test\Check24\Repository\Post as RepositoryPost;
+use Test\Check24\Repository\Repository;
 
 class HomePage extends AbstractController
 {
-    private const string TITLE = 'Home Page';
+    protected string $title = 'Home Page';
+
     public function __construct(
         private readonly Post $post,
-        private \Test\Check24\Core\Database\Migrations\CreateTables $createTables
+        private Repository $repository,
+        private RepositoryPost $postRepository
     ) {
     }
 
     public function execute(): void
     {
-        $this->setTitle(self::TITLE);
-
         try {
             if (!$this->checkRequest(self::GET)) {
                 throw new \RuntimeException('Request method is wrong');
@@ -32,7 +34,5 @@ class HomePage extends AbstractController
 
     public function getPosts()
     {
-        $this->createTables->createTables();
-        return $this->post->getAllPosts();
     }
 }

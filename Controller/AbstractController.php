@@ -28,7 +28,6 @@ abstract class AbstractController
         if (!file_exists($filename)) {
             $filename = 'view/not_found.php';
         }
-
         $this->template = $filename;
 
         ob_start();

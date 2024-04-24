@@ -4,23 +4,32 @@ declare(strict_types=1);
 
 namespace Test\Check24\Repository;
 
-use PDO;
 use Test\Check24\Core\Database\Connection;
 use Test\Check24\Repository\Interface\RepositoryInterface;
 
 class Repository implements RepositoryInterface
 {
+    protected string $table = '';
+    private \PDO $pdo;
+
     public function __construct(
-        private readonly Connection $connection = new Connection()
+        private readonly Connection $connection
     ) {
+        $this->pdo = $this->connection->pdoConnection();
     }
 
-    public function save()
+    public function save(string $query, array $params)
     {
-        // TODO: Implement save() method.
+        try {
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+            $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            throw new \PDOException('Error while saving data from database', (int)$e->getCode());
+        }
     }
 
-    public function edit()
+    public function update()
     {
         // TODO: Implement edit() method.
     }
@@ -31,24 +40,35 @@ class Repository implements RepositoryInterface
     }
 
     public function get(
+        array $params = [],
+        int $fetchType = \PDO::FETCH_DEFAULT
+    ) {
+        try {
+            $whereParams = '';
+
+            foreach ($params as $param => $value) {
+                $whereParams .= $param . '=:' . $param;
+            }
+
+            $query = "SELECT * FROM $this->table WHERE $whereParams";
+
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+        } catch (\PDOException $e) {
+            throw new \PDOException('Error while getting data from database', (int)$e->getCode());
+        }
+
+        return $user;
+    }
+
+    public function getList(
         string $table,
         array $params = [],
-        int $fetchType = PDO::FETCH_DEFAULT,
+        int $fetchType = \PDO::FETCH_DEFAULT,
         $fetchArgs = null,
         $limit = null
     ) {
-        $connection = $this->connection->pdoConnection();
-        $stmt = $connection->prepare("SELECT * FROM $table LIMIT ?");
-
-        if ($params !== []) {
-            $stmt->execute($params);
-        }
-
-        return $stmt->fetchAll($fetchType, $fetchArgs);
-    }
-
-    public function getList()
-    {
         // TODO: Implement getList() method.
     }
 }

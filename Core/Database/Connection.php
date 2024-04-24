@@ -37,7 +37,7 @@ class Connection
                 $pdo->prepare($query)->execute();
             });
         } catch (\PDOException $e) {
-            die($e);
+            die($e->getMessage());
         }
     }
 

@@ -2,15 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Test\Check24\Controller\Post;
+namespace Test\Check24\Controller\User;
 
 use Test\Check24\Controller\AbstractController;
 
-class Add extends AbstractController
+class SignUp extends AbstractController
 {
-
     public function execute()
     {
-        show($this);
+        // TODO: Implement execute() method.
     }
 }
