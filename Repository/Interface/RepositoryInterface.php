@@ -13,13 +13,16 @@ interface RepositoryInterface
     public function delete();
 
     public function get(
+        string $className = '',
         array $params = [],
-        int $fetchType = \PDO::FETCH_DEFAULT
-    );
+        int $fetchType = \PDO::FETCH_DEFAULT,
+    ): mixed;
 
-    public function getList(string $table,
+    public function getList(
+        string $table,
         array $params = [],
         int $fetchType = \PDO::FETCH_DEFAULT,
         $fetchArgs = null,
-        $limit = null);
+        $limit = null
+    );
 }

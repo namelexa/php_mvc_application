@@ -22,10 +22,11 @@ class Repository implements RepositoryInterface
     {
         try {
             $stmt = $this->pdo->prepare($query);
+            show($query);
             $stmt->execute($params);
             $stmt->fetch(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
-            throw new \PDOException('Error while saving data from database', (int)$e->getCode());
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
 
@@ -40,21 +41,37 @@ class Repository implements RepositoryInterface
     }
 
     public function get(
+        string $className = '',
         array $params = [],
-        int $fetchType = \PDO::FETCH_DEFAULT
-    ) {
+        int $fetchType = \PDO::FETCH_CLASS
+    ): mixed {
         try {
-            $whereParams = '';
+            $whereParams = [];
+            $data = null;
 
             foreach ($params as $param => $value) {
-                $whereParams .= $param . '=:' . $param;
+                $whereParams[] = "$param = :$param";
             }
 
-            $query = "SELECT * FROM $this->table WHERE $whereParams";
-
+            $whereClause = implode(' AND ', $whereParams);
+            $query = "SELECT * FROM $this->table WHERE $whereClause";
             $stmt = $this->pdo->prepare($query);
             $stmt->execute($params);
-            $user = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+            switch ($fetchType) {
+                case \PDO::FETCH_CLASS:
+                    $data = $stmt->fetchAll($fetchType, $className);
+                    break;
+                case \PDO::FETCH_OBJ:
+                    $data = $stmt->fetchObject($className);
+                    break;
+                case \PDO::FETCH_ASSOC:
+                    $data = $stmt->fetchAll($fetchType);
+                    break;
+                default:
+            }
+
+            return $data;
         } catch (\PDOException $e) {
             throw new \PDOException('Error while getting data from database', (int)$e->getCode());
         }

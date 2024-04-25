@@ -11,11 +11,9 @@ class CreateTables
     private const array TABLES_LIST = [
         'user' =>
             'id BIGINT NOT NULL AUTO_INCREMENT,
-            firstName VARCHAR(50) NULL DEFAULT NULL,
-            lastName VARCHAR(50) NULL DEFAULT NULL,
             email VARCHAR(50) NOT NULL UNIQUE,
             passwordHash VARCHAR(32) NOT NULL,
-            created_at DATETIME NOT NULL,
+            createdAt DATETIME CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             UNIQUE INDEX uq_email (email ASC)',
         'posts' =>

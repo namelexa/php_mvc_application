@@ -4,7 +4,6 @@
  */
 
 use Test\Check24\Controller\AbstractController;
-
 ?>
 <?=
  $this->getPosts()

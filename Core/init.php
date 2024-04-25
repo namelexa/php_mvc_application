@@ -1,5 +1,4 @@
 <?php
-
 use Test\Check24\Core\Router;
 
 require_once __DIR__ . '/../vendor/autoload.php';

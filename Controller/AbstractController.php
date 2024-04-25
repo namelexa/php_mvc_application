@@ -16,6 +16,7 @@ abstract class AbstractController
     protected ?string $template = null;
     protected array $data = [];
     protected string $html = '';
+    protected array $session = [];
 
     abstract public function execute();
 
@@ -28,6 +29,7 @@ abstract class AbstractController
         if (!file_exists($filename)) {
             $filename = 'view/not_found.php';
         }
+
         $this->template = $filename;
 
         ob_start();
@@ -40,6 +42,25 @@ abstract class AbstractController
     protected function checkRequest($requestType): bool
     {
         return $requestType === $_SERVER['REQUEST_METHOD'];
+    }
+
+    protected function isLoggedIn(): bool
+    {
+        if (!$this->session) {
+            return false;
+        }
+
+        return isset($this->session['logged_in']) && $this->session['logged_in'] === true;
+    }
+
+    public function setSession($session): void
+    {
+        $this->session = $session;
+    }
+
+    public function getSession(): array
+    {
+        return $this->session;
     }
 
     protected function setData(array $data): void

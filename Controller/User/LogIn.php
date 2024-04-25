@@ -10,14 +10,15 @@ use Test\Check24\Repository\UserRepository;
 class LogIn extends AbstractController
 {
     public function __construct(
-        private UserRepository $userRepository
+        private readonly UserRepository $userRepository
     ) {
     }
 
     public function execute(): void
     {
         if (!$this->checkRequest(self::POST)) {
-            header("Location: ../../view/home_page.html");
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+            //TODO add handling wrong request method
             exit;
         }
 
@@ -25,8 +26,11 @@ class LogIn extends AbstractController
         $password = htmlspecialchars($_POST["password"]);
 
         try {
-            $user = $this->login($email, $password);
-            show($_SESSION);
+            if (!$this->login($email, $password)) {
+                header("Location: " . $_SERVER['HTTP_REFERER'] . "?errorLogIMessage=" . urlencode("Email or password is wrong"));
+            }
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+            // TODO handle message for login
         } catch (\PDOException $e) {
             throw new \PDOException('PDOException: ' . $e->getMessage());
         } catch (\Exception $e) {
@@ -34,55 +38,38 @@ class LogIn extends AbstractController
         }
     }
 
-    private function login($email, $password)
+    private function login($email, $password): bool
     {
         if (empty($email) || empty($password)) {
-            $_SESSION["error"] = "Combination of password and email are wrong.";
-            header("Location: ../");
+            $_SESSION["login_error"] = "Combination of password and email are wrong.";
+            header("Location: " . $_SERVER['HTTP_REFERER']);
+            $this->session = $_SESSION;
             exit;
         }
-        $this->saveUser($email, $password);
-        $this->startSession();
+//        $this->saveUser($email, $password);
 
         $user = $this->userRepository->getUser($email);
 
-        if ($this->authenticate($email, $password)) {
-            $_SESSION['email'] = $email;
+        if ($this->authenticate($email, $password, $user)) {
+            $_SESSION['email'] = $user->getEmail();
             $_SESSION['logged_in'] = true;
+            unset($_SESSION['login_error']);
+            $this->session = $_SESSION;
+
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
-    private function authenticate($email, $password): bool
+    private function authenticate($email, $password, $user): bool
     {
-        return $email === "admin" && $password === "password123";
+        return $email === $user->getEmail() && password_verify($password, $user->getPasswordHash());
     }
 
-    private function logout() {
-        $this->startSession();
-
-        unset($_SESSION['email'], $_SESSION['logged_in']);
-
-        session_destroy();
-    }
-
-    public function isLoggedIn() {
-        $this->startSession();
-
-        return isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    }
-
-    public function saveUser($email, $password) {
+    public function saveUser($email, $password)
+    {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $this->userRepository->addUser($email, $hashedPassword);
-    }
-
-    private function startSession(): void
-    {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
     }
 }
