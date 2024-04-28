@@ -14,7 +14,7 @@ $email = $session['email'] ?? '';
         Click me to send POST request
     </a>
 
-    <form id="postForm" method="post" action="user/log_out">
+    <form id="postForm" method="post" action="/user/log_out">
         <input type="hidden" name="logOut" value="true">
     </form>
 </div>

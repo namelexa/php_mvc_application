@@ -13,8 +13,10 @@ $session = $this->getSession();
 <div class="left">
 
     <?php
-    if (!empty($session) && isset($session['logged_in']) && $session['logged_in'] === true) {
-        require_once 'view/user/log_out.php';
+    if ($this->isLoggedIn()) {
+        require_once 'view/user/log_out.php'; ?>
+        <a href='/post/add'>Add new post</a>
+        <?php
     } else {
         require_once 'view/user/log_in_form.php';
     }

@@ -6,6 +6,8 @@ namespace Test\Check24\Model;
 
 class User
 {
+    public const string TABLE_NAME = 'users';
+
     protected string $id;
     protected string $email;
     protected string $passwordHash;

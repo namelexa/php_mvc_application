@@ -17,12 +17,17 @@ abstract class AbstractController
     protected array $data = [];
     protected string $html = '';
     protected array $session = [];
+    protected array $urlParams = [];
+    protected array $errors = [];
+    protected string $result = '';
 
     abstract public function execute();
 
     protected function renderView($name): void
     {
-        $newFilename = preg_replace('/(?<=\w)([A-Z])/', '_$1', $name);
+        $parsedUrl = parse_url($name);
+
+        $newFilename = preg_replace('/(?<=\w)([A-Z])/', '_$1', $parsedUrl['path']);
         $newFilename = strtolower($newFilename);
         $filename = 'view' . $newFilename . '.php';
 
@@ -93,6 +98,16 @@ abstract class AbstractController
         return $this->html ?? htmlspecialchars_decode($this->html);
     }
 
+    public function getUrlParams(): array
+    {
+        return $this->urlParams;
+    }
+
+    public function setUrlParams(array $urlParams): void
+    {
+        $this->urlParams = $urlParams;
+    }
+
 
     protected function edit($view, $data = [])
     {
@@ -101,4 +116,5 @@ abstract class AbstractController
     protected function delete($view, $data = [])
     {
     }
+
 }

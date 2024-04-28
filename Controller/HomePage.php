@@ -6,7 +6,6 @@ namespace Test\Check24\Controller;
 
 use Test\Check24\Model\Post;
 use Test\Check24\Repository\Post as RepositoryPost;
-use Test\Check24\Repository\Repository;
 
 class HomePage extends AbstractController
 {
@@ -14,7 +13,6 @@ class HomePage extends AbstractController
 
     public function __construct(
         private readonly Post $post,
-        private Repository $repository,
         private RepositoryPost $postRepository
     ) {
     }
@@ -32,7 +30,8 @@ class HomePage extends AbstractController
         }
     }
 
-    public function getPosts()
+    public function getPosts(): array
     {
+        return $this->postRepository->getAll();
     }
 }

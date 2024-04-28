@@ -15,10 +15,11 @@ class UserRepository extends Repository
         return $this->get(User::class, ['id' => 1, 'email' => $email], \PDO::FETCH_OBJ);
     }
 
-    public function addUser($email, $hashedPassword)
+    public function addUser($email, $hashedPassword): void
     {
         $query = "INSERT INTO users (email, passwordHash) VALUES (:email, :passwordHash)";
         $params = ['email' => $email, 'passwordHash' => $hashedPassword];
-        return $this->save($query, $params);
+
+        $this->save(User::class, $query, $params);
     }
 }

@@ -6,7 +6,7 @@ namespace Test\Check24\Repository\Interface;
 
 interface RepositoryInterface
 {
-    public function save(string $query, array $params);
+    public function save(string $className, string $query, array $params): int;
 
     public function update();
 
@@ -19,10 +19,7 @@ interface RepositoryInterface
     ): mixed;
 
     public function getList(
-        string $table,
-        array $params = [],
-        int $fetchType = \PDO::FETCH_DEFAULT,
-        $fetchArgs = null,
-        $limit = null
-    );
+        string $className,
+        int $limit = 0
+    ): array;
 }

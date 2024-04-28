@@ -22,13 +22,13 @@ class LogIn extends AbstractController
             exit;
         }
 
-        $email = htmlspecialchars($_POST["email"]);
-        $password = htmlspecialchars($_POST["password"]);
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
 
         try {
-            if (!$this->login($email, $password)) {
-                header("Location: " . $_SERVER['HTTP_REFERER'] . "?errorLogIMessage=" . urlencode("Email or password is wrong"));
+            if (!$this->login($email, $_POST["password"])) {
+                header("Location: " . $_SERVER['HTTP_REFERER']);
             }
+
             header("Location: " . $_SERVER['HTTP_REFERER']);
             // TODO handle message for login
         } catch (\PDOException $e) {
@@ -52,6 +52,7 @@ class LogIn extends AbstractController
 
         if ($this->authenticate($email, $password, $user)) {
             $_SESSION['email'] = $user->getEmail();
+            $_SESSION['user_id'] = (int)$user->getId();
             $_SESSION['logged_in'] = true;
             unset($_SESSION['login_error']);
             $this->session = $_SESSION;

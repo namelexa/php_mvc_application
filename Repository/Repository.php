@@ -18,14 +18,17 @@ class Repository implements RepositoryInterface
         $this->pdo = $this->connection->pdoConnection();
     }
 
-    public function save(string $query, array $params)
+    public function save(string $className, string $query, array $params): int
     {
         try {
+            $this->pdo->beginTransaction();
             $stmt = $this->pdo->prepare($query);
-            show($query);
             $stmt->execute($params);
-            $stmt->fetch(\PDO::FETCH_ASSOC);
+            $this->pdo->commit();
+
+            return (int)$this->pdo->lastInsertId();
         } catch (\PDOException $e) {
+            $this->pdo->rollBack();
             throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
@@ -75,17 +78,22 @@ class Repository implements RepositoryInterface
         } catch (\PDOException $e) {
             throw new \PDOException('Error while getting data from database', (int)$e->getCode());
         }
-
-        return $user;
     }
 
     public function getList(
-        string $table,
-        array $params = [],
-        int $fetchType = \PDO::FETCH_DEFAULT,
-        $fetchArgs = null,
-        $limit = null
-    ) {
-        // TODO: Implement getList() method.
+        string $className,
+        int $limit = 0
+    ): array {
+        if ($limit) {
+            $query = "SELECT * FROM $this->table LIMIT :limit";
+        } else {
+            $query = "SELECT * FROM $this->table";
+        }
+
+        $params = $limit ? ['limit' => $limit] : [];
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, $className);
     }
 }

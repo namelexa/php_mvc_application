@@ -8,9 +8,18 @@ use Test\Check24\Controller\AbstractController;
 
 class Add extends AbstractController
 {
+    protected string $title = 'Add post';
 
     public function execute()
     {
-        show($this);
+        try {
+            if (!$this->checkRequest(self::GET)) {
+                throw new \RuntimeException('Request method is wrong');
+            }
+
+            $this->renderView($_SERVER['REQUEST_URI']);
+        } catch (\RuntimeException $e) {
+            throw new \RuntimeException($e->getMessage(), $e->getCode(), $e);
+        }
     }
 }
